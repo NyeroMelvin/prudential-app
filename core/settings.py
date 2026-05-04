@@ -11,8 +11,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'default-unsafe-key-for-dev')
 # Debug should be False in production (Set DEBUG=False in Render Dashboard)
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# REPLACE with your actual URL from the Render Dashboard (no spaces!)
-ALLOWED_HOSTS = ['prudential-community-health-shield.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['prudential-app.onrender.com', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
