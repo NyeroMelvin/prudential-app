@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 # CRITICAL: You must import the view you want to use
 from applications.views import landing_page 
+from applications.views import create_admin_user
 
 urlpatterns = [
     path('admin/', admin.site.urls),
