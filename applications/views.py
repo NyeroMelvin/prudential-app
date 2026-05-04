@@ -103,8 +103,18 @@ def conduct_interview(request, pk):
     })
 
 # applications/views.py
+from django.shortcuts import HttpResponse
+from django.contrib.auth import get_user_model
+
+def create_admin_user(request):
+    User = get_user_model()
+    if not User.objects.filter(username='admin').exists():
+        User.objects.create_superuser('admin', 'admin@example.com', 'password123')
+        return HttpResponse("Admin user created successfully!")
+    return HttpResponse("Admin user already exists.")
 
 def manual_logout(request):
     logout(request)
     # Instead of redirecting to '/', we render the new logout template
     return render(request, 'applications/logout.html')
+
