@@ -13,6 +13,8 @@ urlpatterns = [
     path('applications/', include('applications.urls')),
     
     path('accounts/', include('django.contrib.auth.urls')),
+
+    path('create-admin/', create_admin_user),
     
     # 3. This is your homepage
     path('', landing_page, name='index'),
