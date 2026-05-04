@@ -73,5 +73,4 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = 'marketing_dashboard'
-import os
-from django.contrib.auth.models import User
+
