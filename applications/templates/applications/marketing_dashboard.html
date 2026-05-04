@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marketing Dashboard | Prudential</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { background-color: #f4f6f9; }
+        .sidebar { background: #B71C1C; min-height: 100vh; color: white; padding-top: 20px; }
+        .card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 sidebar">
+                <h4 class="text-center">Prudential</h4>
+                <hr>
+                <ul class="nav flex-column px-3">
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Marketing Portal</a></li>
+                    <li class="nav-item mt-5">
+                        <a href="{% url 'manual_logout' %}" class="nav-link text-warning">Logout</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="col-md-10 p-4">
+                <h2>Marketing Analytics</h2>
+                
+                <div class="card p-3">
+                    <h5>Applicants Ready for Interview</h5>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr><th>Name</th><th>Status</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for app in applicants %}
+                            <tr>
+                                <td>{{ app.full_name }}</td>
+                                <td>{{ app.get_status_display }}</td>
+                                <td><a href="{% url 'conduct_interview' app.pk %}" class="btn btn-sm btn-primary">Conduct Interview</a></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3">No applicants currently pending review.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card p-3 bg-light"><h5>Average Medical Burden: {{ avg_burden }}</h5></div>
+                
+                <div class="row">
+                    <div class="col-md-6"><div class="card p-3"><h5>Income Distribution</h5><canvas id="incomeChart"></canvas></div></div>
+                    <div class="col-md-6"><div class="card p-3"><h5>Payment Methods</h5><canvas id="paymentChart"></canvas></div></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card p-3">
+                            <h5>Geospatial Risk Map</h5>
+                            <div id="map" style="height: 400px; width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart Utility
+        function createChart(id, type, data, labels, color) {
+            const ctx = document.getElementById(id);
+            if (ctx && data && data.length > 0) {
+                new Chart(ctx, {
+                    type: type,
+                    data: { labels: labels, datasets: [{ data: data, backgroundColor: color }] }
+                });
+            }
+        }
+
+        createChart('incomeChart', 'pie', {{ income_values|safe }}, {{ income_labels|safe }}, ['#FF6384', '#36A2EB']);
+        createChart('paymentChart', 'bar', {{ payment_values|safe }}, {{ payment_labels|safe }}, '#B71C1C');
+
+        // Map Initialization
+        const mapDiv = document.getElementById('map');
+        if (mapDiv) {
+            const map = L.map('map').setView([0.3476, 32.5825], 7);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+            {% for p in map_data %}
+                {% if p.latitude and p.longitude %}
+                    L.circleMarker([{{ p.latitude }}, {{ p.longitude }}], {radius: 6, color: 'red'}).addTo(map)
+                     .bindPopup("Risk: {{ p.risk_index }}<br>Illness: {{ p.illness_type }}");
+                {% endif %}
+            {% endfor %}
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Prudential Portal | Insurance Red Edition</title>
+    <style>
+        /* Reset & Base: Clean white background with uniform red insurance identity */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            /* Solid white background as requested */
+            background: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+            position: relative;
+        }
+        
+        /* Subtle decorative red gradient overlay for premium feel (barely visible, keeps white background) */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 20%, rgba(183, 28, 28, 0.03) 0%, rgba(0, 0, 0, 0.02) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .container { position: relative; z-index: 3; }
+        
+        /* Welcome heading - uniform red shade #B71C1C */
+        h1 {
+            font-weight: 800;
+            font-size: 3.2rem;
+            letter-spacing: -0.2px;
+            color: #B71C1C;
+            margin-bottom: 1rem;
+            text-shadow: none;
+        }
+        
+        /* Redefining message - uniform red shade #C62828 (slightly lighter but same family for emphasis) 
+           Keeping consistent with the same red palette */
+        .lead-custom {
+            color: #B71C1C;
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+        
+        /* Card styling with uniform red border */
+        .card {
+            background: rgba(255, 255, 255, 0.96);
+            border: none;
+            border-radius: 34px;
+            transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.3s ease;
+            box-shadow: 0 20px 32px -12px rgba(0, 0, 0, 0.15);
+            padding: 1.2rem 0.8rem;
+            border-top: 3px solid #B71C1C;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 28px 40px -12px rgba(183, 28, 28, 0.25);
+            background: rgba(255, 255, 255, 1);
+            border-top: 3px solid #B71C1C;
+        }
+        
+        /* Primary button - uniform #B71C1C gradient */
+        .btn-prudential {
+            background: linear-gradient(105deg, #B71C1C 0%, #B71C1C 100%);
+            color: white;
+            border-radius: 44px;
+            padding: 10px 24px;
+            font-weight: 700;
+            border: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 14px rgba(183, 28, 28, 0.3);
+        }
+        
+        .btn-prudential:hover {
+            background: #8B0000;
+            transform: scale(1.02);
+            color: white;
+            box-shadow: 0 8px 18px rgba(183, 28, 28, 0.4);
+        }
+        
+        /* Outline button - uniform #B71C1C */
+        .btn-outline-red {
+            border-radius: 44px;
+            border: 2px solid #B71C1C;
+            background: rgba(183, 28, 28, 0.05);
+            color: #B71C1C;
+            font-weight: 700;
+            padding: 9px 22px;
+            transition: all 0.25s ease;
+        }
+        
+        .btn-outline-red:hover {
+            background-color: #B71C1C;
+            color: white;
+            border-color: #B71C1C;
+            transform: scale(1.02);
+            box-shadow: 0 6px 14px rgba(183, 28, 28, 0.35);
+        }
+        
+        /* Card headings - uniform red shade matching Member, Staff, Marketing Team wordings */
+        .card h3 { 
+            font-weight: 800; 
+            color: #B71C1C;
+            margin-bottom: 0.75rem; 
+        }
+        
+        .card .text-muted { 
+            color: #5D4037 !important; 
+            font-weight: 500; 
+            font-size: 0.94rem; 
+            opacity: 0.85; 
+        }
+        
+        /* SVG icon fill to uniform #B71C1C */
+        .card svg {
+            fill: #B71C1C;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1.2rem; }
+            h1 { font-size: 2rem; }
+            .lead-custom { font-size: 1rem; }
+        }
+        
+        /* Trust badge with uniform red background */
+        .trust-badge {
+            background: #B71C1C;
+            backdrop-filter: none;
+            border-radius: 60px;
+            padding: 7px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            color: #FFFFFF;
+            border: none;
+            box-shadow: 0 2px 8px rgba(183, 28, 28, 0.2);
+        }
+        
+        .brand-tag {
+            position: fixed; bottom: 14px; right: 20px;
+            background: #B71C1C;
+            backdrop-filter: none;
+            color: #FFFFFF; 
+            font-size: 12px; 
+            padding: 4px 14px;
+            border-radius: 60px; 
+            z-index: 10;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Ensure all red elements use the exact same shade */
+        .btn-prudential, .btn-outline-red, .card h3, h1, .lead-custom, .trust-badge, .brand-tag, .card svg {
+            transition: all 0.2s ease;
+        }
+        
+        /* Additional consistency for button hover states */
+        .btn-prudential:active, .btn-outline-red:active {
+            transform: scale(0.98);
+        }
+        
+        /* Animation for cards */
+        .card {
+            animation: fadeSlideUp 0.5s ease-out backwards;
+        }
+        
+        @keyframes fadeSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .col-md-3:nth-child(1) .card { animation-delay: 0.05s; }
+        .col-md-3:nth-child(2) .card { animation-delay: 0.15s; }
+        .col-md-3:nth-child(3) .card { animation-delay: 0.25s; }
+        
+        /* Bottom tagline styling with uniform red */
+        .tagline-chip {
+            background: rgba(183, 28, 28, 0.08);
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 80px;
+            color: #B71C1C;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        /* Ensure any lingering text links or accents match uniform red */
+        a, a:hover {
+            transition: color 0.2s;
+        }
+        
+        .btn-outline-red:focus, .btn-prudential:focus {
+            box-shadow: 0 0 0 0.2rem rgba(183, 28, 28, 0.25);
+        }
+        
+        /* Make all red elements perfectly uniform */
+        .text-red-uniform {
+            color: #B71C1C;
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <div class="mb-4">
+            <!-- Welcome message now in UNIFORM RED (#B71C1C) -->
+            <h1 class="fw-bold display-5">Welcome to Prudential Community Health Shield</h1>
+            <!-- Redefining message now in UNIFORM RED (#B71C1C) -->
+            <p class="lead-custom fs-5 mt-2 fw-semibold" style="max-width: 720px; margin: 0 auto;">
+                ❤️‍🩹 Redefining protection with strength & compassion — your legacy, our promise.
+            </p>
+        </div>
+        
+        <div class="row g-5 justify-content-center mt-2">
+            <!-- Member Card -->
+            <div class="col-md-3 col-sm-8">
+                <div class="card shadow p-4 text-center h-100">
+                    <div class="mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 16 16" fill="#B71C1C">
+                            <path fill-rule="evenodd" d="M8 0c-.69 0-1.843.265-2.928.56-1.11.3-2.229.655-2.887.87a1.54 1.54 0 0 0-1.044 1.262c-.596 4.477.787 7.795 2.465 9.99a11.8 11.8 0 0 0 2.517 2.453c.386.295.855.464 1.387.464.532 0 1-.169 1.387-.464a11.8 11.8 0 0 0 2.517-2.453c1.678-2.195 3.061-5.513 2.465-9.99a1.54 1.54 0 0 0-1.044-1.263 27 27 0 0 0-2.887-.87C9.843.265 8.69 0 8 0m2.146 5.146a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793z"/>
+                        </svg>
+                    </div>
+                    <h3>Member</h3>
+                    <p class="text-muted">Secure your future: Register for Community Health Shield & personalized plans</p>
+                    <a href="{% url 'register_applicant' %}" class="btn btn-prudential w-75 mx-auto mt-3">Go to Registration</a>
+                </div>
+            </div>
+
+            <!-- Staff / Admin Card -->
+            <div class="col-md-3 col-sm-8">
+                <div class="card shadow p-4 text-center h-100">
+                    <div class="mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 16 16" fill="#B71C1C">
+                            <path fill-rule="evenodd" d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h10s1 0 1-1-1-4-6-4-6 3-6 4m13.5-6.5a.5.5 0 0 1 .5.5 2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2a1.5 1.5 0 0 0 1.5-1.5.5.5 0 0 1 .5-.5"/>
+                        </svg>
+                    </div>
+                    <h3>Staff / Admin</h3>
+                    <p class="text-muted">Manage applications, review claims & risk reports with full authority</p>
+                    <a href="{% url 'staff_dashboard' %}" class="btn btn-outline-red w-75 mx-auto mt-3">Go to Dashboard</a>
+                </div>
+            </div>
+
+            <!-- Marketing Team Card -->
+            <div class="col-md-3 col-sm-8">
+                <div class="card shadow p-4 text-center h-100">
+                    <div class="mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 16 16" fill="#B71C1C">
+                            <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5zM10 8a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0v-3a1 1 0 0 1 1-1"/>
+                        </svg>
+                    </div>
+                    <h3>Marketing Team</h3>
+                    <p class="text-muted">Review approved applications, conduct interviews, and fill household survey forms.</p>
+                    <a href="{% url 'marketing_dashboard' %}" class="btn btn-outline-red w-75 mx-auto mt-3">Go to Marketing</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Trust badge with uniform red -->
+        <div class="mt-5 mb-3">
+            <div class="trust-badge">
+                <span>🔥 24/7 claims & risk support</span>
+                <span>•</span>
+                <span>🔥 120+ years of red legacy</span>
+                <span>•</span>
+                <span>🔥 Your health, our mission</span>
+            </div>
+        </div>
+        <div class="tagline-chip">
+            🛡️ Prudential Red Assurance — strength you can see
+        </div>
+    </div>
+    
+    <!-- Floating brand tag with uniform red -->
+    <div class="brand-tag">🔴 Prudential | Red Shield Secure</div>
+</body>
+</html>
