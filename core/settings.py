@@ -75,13 +75,3 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = 'marketing_dashboard'
 import os
 from django.contrib.auth.models import User
-
-# This will create the admin user if it doesn't exist
-if os.environ.get('CREATE_SUPERUSER') == 'True':
-    # You can change the username, email, and password to whatever you like
-    if not User.objects.filter(username='admin').exists():
-        User.objects.create_superuser(
-            username='silver', 
-            email='admin@example.com', 
-            password='silver001'
-        )
