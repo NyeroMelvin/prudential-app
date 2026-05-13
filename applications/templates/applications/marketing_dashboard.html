@@ -2,101 +2,623 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Marketing Dashboard | Prudential</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Intelligence Dashboard | Prudential</title>
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
-        body { background-color: #f4f6f9; }
-        .sidebar { background: #B71C1C; min-height: 100vh; color: white; padding-top: 20px; }
-        .card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+
+        :root{
+            --primary:#B71C1C;
+            --primary-light:#d32f2f;
+            --bg:#f5f7fb;
+            --text:#111827;
+            --muted:#6b7280;
+        }
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            background:var(--bg);
+            font-family:'Inter',sans-serif;
+            color:var(--text);
+            overflow-x:hidden;
+        }
+
+        /* =========================
+           BACKGROUND EFFECTS
+        ========================== */
+
+        .bg-orb{
+            position:fixed;
+            width:400px;
+            height:400px;
+            border-radius:50%;
+            filter:blur(120px);
+            z-index:0;
+            opacity:.18;
+        }
+
+        .orb1{
+            background:#ff4d4d;
+            top:-100px;
+            left:-120px;
+        }
+
+        .orb2{
+            background:#B71C1C;
+            right:-100px;
+            bottom:-100px;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================== */
+
+        .topbar{
+            position:sticky;
+            top:0;
+            z-index:1000;
+            background:rgba(255,255,255,.75);
+            backdrop-filter:blur(20px);
+            border-bottom:1px solid rgba(255,255,255,.4);
+            padding:18px 0;
+        }
+
+        .brand{
+            font-size:1.4rem;
+            font-weight:900;
+            color:var(--primary);
+            letter-spacing:-0.5px;
+        }
+
+        .brand span{
+            color:#111;
+            font-weight:700;
+        }
+
+        .logout-btn{
+            background:linear-gradient(135deg,var(--primary),var(--primary-light));
+            color:white;
+            border:none;
+            padding:12px 20px;
+            border-radius:14px;
+            font-weight:700;
+            text-decoration:none;
+            transition:.3s;
+        }
+
+        .logout-btn:hover{
+            transform:translateY(-3px);
+            color:white;
+            box-shadow:0 12px 25px rgba(183,28,28,.25);
+        }
+
+        /* =========================
+           PAGE HEADER
+        ========================== */
+
+        .hero{
+            position:relative;
+            z-index:2;
+            padding:60px 0 40px;
+        }
+
+        .hero h1{
+            font-size:3.5rem;
+            font-weight:900;
+            letter-spacing:-2px;
+            line-height:1.05;
+        }
+
+        .hero h1 span{
+            color:var(--primary);
+        }
+
+        .hero p{
+            color:var(--muted);
+            font-size:1.1rem;
+            margin-top:20px;
+            max-width:700px;
+            line-height:1.8;
+        }
+
+        /* =========================
+           GLASS CARDS
+        ========================== */
+
+        .glass-card{
+            background:rgba(255,255,255,.65);
+            backdrop-filter:blur(20px);
+            border:1px solid rgba(255,255,255,.45);
+            border-radius:30px;
+            padding:28px;
+            box-shadow:
+                0 20px 40px rgba(0,0,0,.05),
+                inset 0 1px 0 rgba(255,255,255,.5);
+            transition:.4s ease;
+            position:relative;
+            overflow:hidden;
+        }
+
+        .glass-card:hover{
+            transform:translateY(-8px);
+            box-shadow:0 25px 55px rgba(183,28,28,.08);
+        }
+
+        .glass-card::before{
+            content:"";
+            position:absolute;
+            width:180px;
+            height:180px;
+            background:rgba(183,28,28,.05);
+            border-radius:50%;
+            top:-60px;
+            right:-60px;
+        }
+
+        /* =========================
+           STATS
+        ========================== */
+
+        .stat-card{
+            text-align:center;
+            padding:30px;
+        }
+
+        .stat-card h2{
+            font-size:2.5rem;
+            font-weight:900;
+            color:var(--primary);
+        }
+
+        .stat-card p{
+            color:var(--muted);
+            margin-top:10px;
+            font-weight:500;
+        }
+
+        /* =========================
+           TABLE
+        ========================== */
+
+        .table-modern{
+            border-collapse:separate;
+            border-spacing:0 12px;
+        }
+
+        .table-modern thead th{
+            border:none;
+            color:var(--muted);
+            font-size:.9rem;
+            font-weight:700;
+        }
+
+        .table-modern tbody tr{
+            background:white;
+            box-shadow:0 10px 25px rgba(0,0,0,.04);
+            border-radius:18px;
+            transition:.3s;
+        }
+
+        .table-modern tbody tr:hover{
+            transform:scale(1.01);
+        }
+
+        .table-modern td{
+            border:none;
+            vertical-align:middle;
+            padding:18px;
+        }
+
+        .action-btn{
+            background:linear-gradient(135deg,var(--primary),var(--primary-light));
+            color:white;
+            border:none;
+            padding:10px 16px;
+            border-radius:12px;
+            font-size:.85rem;
+            font-weight:700;
+            text-decoration:none;
+            transition:.3s;
+        }
+
+        .action-btn:hover{
+            transform:translateY(-2px);
+            color:white;
+        }
+
+        /* =========================
+           CHARTS
+        ========================== */
+
+        canvas{
+            margin-top:20px;
+        }
+
+        /* =========================
+           MAP
+        ========================== */
+
+        #map{
+            height:500px;
+            width:100%;
+            border-radius:24px;
+            overflow:hidden;
+            margin-top:15px;
+        }
+
+        /* =========================
+           BADGES
+        ========================== */
+
+        .badge-live{
+            background:rgba(16,185,129,.12);
+            color:#059669;
+            padding:10px 16px;
+            border-radius:50px;
+            font-weight:700;
+            font-size:.85rem;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media(max-width:768px){
+
+            .hero h1{
+                font-size:2.3rem;
+            }
+
+            .glass-card{
+                padding:22px;
+            }
+
+        }
+
     </style>
 </head>
+
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-2 sidebar">
-                <h4 class="text-center">Prudential</h4>
-                <hr>
-                <ul class="nav flex-column px-3">
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Marketing Portal</a></li>
-                    <li class="nav-item mt-5">
-                        <a href="{% url 'manual_logout' %}" class="nav-link text-warning">Logout</a>
-                    </li>
-                </ul>
+
+    <!-- Background Effects -->
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+
+    <!-- NAVBAR -->
+    <div class="topbar">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+
+            <div class="brand">
+                PRUDENTIAL <span>Marketing Intelligence</span>
             </div>
-            
-            <div class="col-md-10 p-4">
-                <h2>Marketing Analytics</h2>
-                
-                <div class="card p-3">
-                    <h5>Applicants Ready for Interview</h5>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr><th>Name</th><th>Status</th><th>Action</th></tr>
-                        </thead>
-                        <tbody>
-                            {% for app in applicants %}
-                            <tr>
-                                <td>{{ app.full_name }}</td>
-                                <td>{{ app.get_status_display }}</td>
-                                <td><a href="{% url 'conduct_interview' app.pk %}" class="btn btn-sm btn-primary">Conduct Interview</a></td>
-                            </tr>
-                            {% empty %}
-                            <tr><td colspan="3">No applicants currently pending review.</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div class="badge-live">
+                    ● Analytics Active
                 </div>
 
-                <div class="card p-3 bg-light"><h5>Average Medical Burden: {{ avg_burden }}</h5></div>
-                
-                <div class="row">
-                    <div class="col-md-6"><div class="card p-3"><h5>Income Distribution</h5><canvas id="incomeChart"></canvas></div></div>
-                    <div class="col-md-6"><div class="card p-3"><h5>Payment Methods</h5><canvas id="paymentChart"></canvas></div></div>
-                </div>
+                <a href="{% url 'manual_logout' %}" class="logout-btn">
+                    Logout
+                </a>
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card p-3">
-                            <h5>Geospatial Risk Map</h5>
-                            <div id="map" style="height: 400px; width: 100%;"></div>
-                        </div>
-                    </div>
-                </div>
             </div>
+
         </div>
     </div>
 
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container-fluid px-4">
+
+            <h1>
+                Marketing & Community
+                <span>Risk Intelligence</span>
+            </h1>
+
+            <p>
+                Monitor applicant interviews, household healthcare risk exposure,
+                geospatial trends, and payment analytics through a modern intelligent
+                healthcare operations dashboard.
+            </p>
+
+        </div>
+    </section>
+
+    <!-- CONTENT -->
+    <div class="container-fluid px-4 pb-5 position-relative" style="z-index:2;">
+
+        <!-- STATS -->
+        <div class="row g-4 mb-4">
+
+            <div class="col-lg-4">
+                <div class="glass-card stat-card">
+                    <h2>{{ applicants|length }}</h2>
+                    <p>Applicants Pending Interview</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="glass-card stat-card">
+                    <h2>{{ avg_burden }}</h2>
+                    <p>Average Medical Burden</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="glass-card stat-card">
+                    <h2>98%</h2>
+                    <p>Coverage Intelligence Accuracy</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- APPLICANTS TABLE -->
+        <div class="glass-card mb-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+                    <h4 class="fw-bold mb-1">
+                        Applicants Ready for Interview
+                    </h4>
+
+                    <p class="text-secondary m-0">
+                        Review pending healthcare applicants
+                    </p>
+                </div>
+
+                <div class="badge-live">
+                    Live Queue
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table table-modern align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Applicant Name</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for app in applicants %}
+
+                        <tr>
+
+                            <td class="fw-semibold">
+                                {{ app.full_name }}
+                            </td>
+
+                            <td>
+                                <span class="badge bg-success px-3 py-2 rounded-pill">
+                                    {{ app.get_status_display }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <a href="{% url 'conduct_interview' app.pk %}" class="action-btn">
+                                    Conduct Interview
+                                </a>
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="3">
+                                No applicants currently pending review.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- CHARTS -->
+        <div class="row g-4 mb-4">
+
+            <div class="col-lg-6">
+
+                <div class="glass-card">
+
+                    <h4 class="fw-bold">
+                        Income Distribution
+                    </h4>
+
+                    <p class="text-secondary">
+                        Breakdown of applicant income levels
+                    </p>
+
+                    <canvas id="incomeChart"></canvas>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+
+                <div class="glass-card">
+
+                    <h4 class="fw-bold">
+                        Payment Methods
+                    </h4>
+
+                    <p class="text-secondary">
+                        Preferred healthcare payment channels
+                    </p>
+
+                    <canvas id="paymentChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- MAP -->
+        <div class="glass-card">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+
+                    <h4 class="fw-bold">
+                        Geospatial Risk Intelligence Map
+                    </h4>
+
+                    <p class="text-secondary m-0">
+                        Regional healthcare risk visualization
+                    </p>
+
+                </div>
+
+                <div class="badge-live">
+                    Uganda Risk Monitoring
+                </div>
+
+            </div>
+
+            <div id="map"></div>
+
+        </div>
+
+    </div>
+
     <script>
-        // Chart Utility
-        function createChart(id, type, data, labels, color) {
+
+        // =========================
+        // CHARTS
+        // =========================
+
+        function createChart(id, type, data, labels, colors) {
+
             const ctx = document.getElementById(id);
-            if (ctx && data && data.length > 0) {
+
+            if(ctx && data && data.length > 0){
+
                 new Chart(ctx, {
-                    type: type,
-                    data: { labels: labels, datasets: [{ data: data, backgroundColor: color }] }
+
+                    type:type,
+
+                    data:{
+                        labels:labels,
+
+                        datasets:[{
+                            data:data,
+                            backgroundColor:colors,
+                            borderRadius:12,
+                            borderWidth:0
+                        }]
+                    },
+
+                    options:{
+                        responsive:true,
+                        plugins:{
+                            legend:{
+                                labels:{
+                                    font:{
+                                        family:'Inter'
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                 });
+
             }
+
         }
 
-        createChart('incomeChart', 'pie', {{ income_values|safe }}, {{ income_labels|safe }}, ['#FF6384', '#36A2EB']);
-        createChart('paymentChart', 'bar', {{ payment_values|safe }}, {{ payment_labels|safe }}, '#B71C1C');
+        createChart(
+            'incomeChart',
+            'doughnut',
+            {{ income_values|safe }},
+            {{ income_labels|safe }},
+            ['#B71C1C','#ef5350','#ff8a80','#ffcdd2']
+        );
 
-        // Map Initialization
-        const mapDiv = document.getElementById('map');
-        if (mapDiv) {
-            const map = L.map('map').setView([0.3476, 32.5825], 7);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        createChart(
+            'paymentChart',
+            'bar',
+            {{ payment_values|safe }},
+            {{ payment_labels|safe }},
+            ['#B71C1C','#ef5350','#ff8a80','#ffcdd2']
+        );
 
-            {% for p in map_data %}
-                {% if p.latitude and p.longitude %}
-                    L.circleMarker([{{ p.latitude }}, {{ p.longitude }}], {radius: 6, color: 'red'}).addTo(map)
-                     .bindPopup("Risk: {{ p.risk_index }}<br>Illness: {{ p.illness_type }}");
-                {% endif %}
-            {% endfor %}
-        }
+        // =========================
+        // LEAFLET MAP
+        // =========================
+
+        const map = L.map('map').setView([0.3476, 32.5825], 7);
+
+        L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                attribution:'© OpenStreetMap contributors'
+            }
+        ).addTo(map);
+
+        {% for p in map_data %}
+
+            {% if p.latitude and p.longitude %}
+
+                L.circleMarker(
+                    [{{ p.latitude }}, {{ p.longitude }}],
+                    {
+                        radius:8,
+                        color:'#B71C1C',
+                        fillColor:'#ef5350',
+                        fillOpacity:.7,
+                        weight:2
+                    }
+                )
+
+                .addTo(map)
+
+                .bindPopup(`
+                    <strong>Risk Index:</strong> {{ p.risk_index }}<br>
+                    <strong>Illness:</strong> {{ p.illness_type }}
+                `);
+
+            {% endif %}
+
+        {% endfor %}
+
     </script>
+
 </body>
 </html>
